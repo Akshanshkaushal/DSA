@@ -1,0 +1,214 @@
+//climbing stairs / fibonacci series
+You are climbing a staircase. It takes n steps to reach the top.
+
+Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+
+ 
+
+Example 1:
+
+Input: n = 2
+Output: 2
+
+class Solution {
+
+public:
+  int help(int n, vector<int>& dp){
+
+        if (n == 0 || n == 1) {
+            return 1;
+        }
+
+        if(dp[n] != -1) return dp[n];
+
+        int left = help(n-1, dp);
+       int right = help(n-2, dp);
+        
+        return dp[n] = left + right;
+  }
+
+public:
+    int climbStairs(int n) {
+      
+      vector<int> dp(n+1,-1);
+      return help(n,dp);
+
+    }
+};
+
+//frog jump
+Given an integer array height[] where height[i] represents the height of the i-th stair, a frog starts from the first stair and wants to reach the top. From any stair i, the frog has two options: it can either jump to the (i+1)th stair or the (i+2)th stair. The cost of a jump is the absolute difference in height between the two stairs. Determine the minimum total cost required for the frog to reach the top.
+
+Example:
+
+Input: heights[] = [20, 30, 40, 20] 
+Output: 20
+
+class Solution {
+  public:
+  
+    int solve(int i, vector<int>& height, vector<int> &dp){
+        
+        if(i==0) return 0;
+        if(i==1) return abs(height[1]-height[0]);
+        
+        if(dp[i] != -1) return dp[i];
+        
+        int left = abs(height[i]-height[i-1] ) + solve(i-1, height, dp);
+        int right = abs(height[i]-height[i-2]) + solve(i-2, height, dp);
+        
+        return dp[i] = min(left, right);
+        
+    }
+    
+  
+    int minCost(vector<int>& height) {
+        
+        int n = height.size();
+        vector<int> dp(n,-1);
+        return solve(n-1, height, dp);
+        
+    }
+};
+
+
+or 
+
+class Solution {
+  public:
+  
+  public:
+   int f(int i, vector<int>& height,vector<int>& dp){
+       
+       if(i==0) return 0;
+       
+       if(dp[i] != -1) return dp[i];
+       
+     int left = f(i-1,height,dp) + abs(height[i] - height[i-1]);
+
+     int right = INT_MAX;
+     if(i>1) right = f(i-2,height,dp) + abs(height[i] - height[i-2]);
+       
+       return dp[i] = min(left,right);
+       
+   }
+   
+  
+    int minCost(vector<int>& height) {
+        int n = height.size();
+        vector<int> dp(n,-1);
+         return f(n-1,height,dp);
+        
+    }
+};
+
+//frog jump 2
+from stone 0 and from stone i, he can jump to stones i + 1, i + 2, … i + k. 
+ cost for jumping from stone i to stone j is abs(arr[i] – arr[j]).
+minimum cost 
+
+ class Solution {
+  
+  public:
+    int f(int i, vector<int>& height, int k, vector<int>& dp){
+        
+        if(i == 0) return 0;
+        
+        if(dp[i] != -1) return dp[i];
+        
+        int minjumps = INT_MAX;
+        
+        //iterate over possible steps
+        for(int j=1; j<=k; j++){
+            
+            if(i-j>=0){
+                int jump = f(i - j, height, k, dp) + abs(height[i] - height[i - j]);
+                minjumps = min(minjumps, jump);
+            }
+       
+        }
+            
+            return dp[i] = minjumps;  
+    }
+    
+  public:
+    int minimizeCost(vector<int>& height, int n, int k) {
+        
+        vector<int> dp(n,-1);
+        return f(n-1,height,k,dp);
+        
+    }
+};
+
+
+// house robber 1
+no 2 houses together
+max amount on steal
+
+class Solution {
+
+public:
+    int f(int i, vector<int>& nums){
+
+         if(i == 0) return nums[i];
+         if(i < 0) return 0;
+
+         int pick  = nums[i] + f(i-2, nums);
+         int notpick = 0 + f(i-1, nums);
+
+         return max(pick, notpick);
+
+    }
+
+public:
+    int rob(vector<int>& nums) {
+        
+        int n = nums.size();
+
+        return f(n-1,nums);
+
+    }
+};
+
+//House Robber II
+same but circular 
+so applying same logic excluding first and then excluding last term 
+taking max of both as first and last can never be together
+
+class Solution {
+public:
+   
+   int f(int i, vector<int>& nums){
+
+      int n = nums.size();
+      
+      if(i==0) return nums[i];
+
+      if(i<0) return 0;
+
+      int pick = nums[i] + f(i-2, nums);
+      int notpick = 0 + f(i-1, nums);
+
+      return max(notpick, pick);
+
+   }
+
+    int rob(vector<int>& nums) {
+        
+        int n = nums.size();
+
+        if(n==1) return nums[0];
+        
+        vector<int> temp1, temp2;
+
+        for(int i=0; i<n; i++){
+           if(i!=0) temp1.push_back(nums[i]);
+           if(i!=n-1) temp2.push_back(nums[i]);
+        }
+
+        int n1 = temp1.size(), n2 = temp2.size();
+
+        return max(f(n1-1,temp1), f(n2-1, temp2));
+
+    }
+};

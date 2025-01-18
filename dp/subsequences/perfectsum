@@ -1,0 +1,376 @@
+
+
+    
+ 2>   check if sum==target
+
+       bool f(int i, vector<int>& arr, int target){
+        
+        if(target==0) return true;
+        if(i==0) return arr[0]==target;
+        
+        bool nottake = f(i-1,arr,target);
+        
+        bool take = false;
+        if(arr[i]<=target){
+            take = f(i-1, arr, target-arr[i]);
+        }
+        
+        return take + nottake;
+        
+        
+    }
+  
+    bool isSubsetSum(vector<int>& arr, int target) {
+        int n = arr.size();
+        return f(n-1, arr, target);
+        
+    }
+
+    // memo it dp[i][target]
+    // target+1 space used because 0->target
+
+     bool f(int i, vector<int>& arr, int target, vector<vector<int>>& dp) {
+    if (target == 0) return true;
+    if (i == 0) return arr[0] == target;
+
+    if (dp[i][target] != -1) return dp[i][target];
+
+    bool nottake = f(i - 1, arr, target, dp);
+
+    bool take = false;
+    if (arr[i] <= target) {
+        take = f(i - 1, arr, target - arr[i], dp);
+    }
+
+    return dp[i][target] = take + nottake;
+}
+
+bool isSubsetSum(vector<int>& arr, int target) {
+    int n = arr.size();
+    vector<vector<int>> dp(n, vector<int>(target + 1, -1));
+    // -1 for checking dp
+    return f(n - 1, arr, target, dp);
+}
+
+// dp soln
+//tabular form -- bottom up app
+
+// vector space
+vector<vector<bool>> dp(n, vector<bool> (k+1, 0))
+
+// base case
+// if (target == 0) return true; ==>
+   for(int i=0; i<n; i++) dp[i][0] = true
+
+// if (i == 0) return arr[0] == target; ==>
+   dp[0][arr[0]] = true
+
+
+// nested loops 
+ i=n-1->0  --> revserse i=1->n-1 //0 included in base case
+ target->0 --> reverse target=1->k
+
+for(int i=1; i<n; i++){
+    for(int target=1; target<=k; target++){
+       
+       // recursive relation if take nottake
+
+       bool nottake = dp[i-1][target]
+
+       bool take = false
+       if(arr[i]<=target){
+         take = dp[i-1][target-arr[i]]
+         dp[i][target] = take | nottake
+       }
+
+    }
+    
+    //  return f(n - 1, arr, target, dp);
+         return dp[n-1][k]
+}
+
+
+
+1>perfectsum
+target==sum counting
+
+    int f(int i, vector<int>& arr, int target){
+        
+        if(target==0) return 1;
+        if (i == 0) return (arr[0] == target);
+
+        if 0 is present in the arr--> [0,0,1]
+        --- base case will change
+        if(i==0){
+            if(sum==0 && arr[0]==0) return 2; // two cases either take or not take
+            if(sum==0 || arr[0]==0) return 1;
+            return 0; // in all other cases
+        }
+        ---
+        
+        int nottake = 0 + f(i-1,arr,target);
+        
+        int take = 0;
+        if(arr[i]<=target){
+            take = arr[i] + f(i+1,arr,target-arr[i]);
+        }
+        
+        return take + nottake;
+        
+    }
+  
+    int perfectSum(vector<int>& arr, int target) {
+         
+         int n = arr.size();
+         return f(n-1, arr, target);
+    }
+
+
+//
+int f(int i, vector<int>& arr, int target, vector<vector<int>> &dp) {
+    
+    
+    if(i==0){
+        if(target==0 && arr[0]==0) return 2; 
+        if(target==0 || target==arr[0]) return 1;
+        return 0;
+    }
+    
+    if(dp[i][target] != -1) return dp[i][target];
+    
+    int nottake = f(i - 1, arr, target, dp);
+    int take = 0;
+    
+    if (arr[i] <= target) {
+        take = f(i - 1, arr, target - arr[i], dp);
+    }
+    return dp[i][target] = take + nottake;
+}
+
+int perfectSum(vector<int>& arr, int target) {
+    
+    int n = arr.size();
+    vector<vector<int>> dp(n, vector<int> (target+1, -1));
+    return f(n - 1, arr, target,dp);
+}
+
+
+
+2>// partitions with given differnece
+Input: arr[] =  [5, 2, 6, 4], d = 3
+Output: 1
+Explanation: There is only one possible partition of this array. Partition : {6, 4}, {5, 2}. The subset difference between subset sum is: (6 + 4) - (5 + 2) = 3.
+
+s1>s2
+s1-s2=d
+s1=totalsum-s2
+
+s2=(totalsum-d)/2 
+target = s2 
+
+observation:
+given nums[i]>=0 --> totalsum-d>=0
+/2 thats why it should be even
+
+//--> bases cases
+if(totalsum-d<0 || (totalsum-d)%2) return false
+
+same as perfect sum problem for the subset and find out the count
+target = s2 
+
+
+
+
+
+
+3>// target sum 
+
+Input: nums = [1,1,1,1,1], target = 3
+Output: 5
+Explanation: There are 5 ways to assign symbols to make the sum of nums be target 3.
+-1 + 1 + 1 + 1 + 1 = 3
++1 - 1 + 1 + 1 + 1 = 3
++1 + 1 - 1 + 1 + 1 = 3
++1 + 1 + 1 - 1 + 1 = 3
++1 + 1 + 1 + 1 - 1 = 3
+
+n-1->0
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int target) {
+        int n = nums.size();
+        return cal(nums, target, n-1, 0);
+    }
+
+    int cal(vector<int>& nums, int tar, int idx, int currSum) {
+        if (idx == 0) {
+            int add = (currSum + nums[0] == tar) ? 1 : 0;
+            int sub = (currSum - nums[0] == tar) ? 1 : 0;
+            return add + sub;
+
+        }
+
+        int add = cal(nums, tar, idx - 1, currSum + nums[idx]);
+        int sub = cal(nums, tar, idx - 1, currSum - nums[idx]);
+
+        return add + sub;
+    }
+};
+
+
+// 0->n-1
+
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int target) {
+        return cal(nums, target, 0, 0);
+    }
+
+    int cal(vector<int>& nums, int tar, int idx, int currSum) {
+        if (idx == nums.size()) {
+            return (currSum == tar) ? 1 : 0;
+        }
+        
+        //backtracking handled by recusrsion itself
+        int add = cal(nums, tar, idx - 1, currSum + nums[idx]);
+        int sub = cal(nums, tar, idx + 1, currSum - nums[idx]);
+
+        return add + sub;
+    }
+};
+
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int target) {
+        return cal(nums, target, 0, 0);
+    }
+
+    int cal(vector<int>& nums, int tar, int idx, int currSum) {
+        if (idx == nums.size()) {
+            return (currSum == tar) ? 1 : 0;
+        }
+// handling backtracking by ourself
+         currSum+=nums[idx];
+
+         int add = cal(nums, tar, idx + 1, currSum);
+         currSum-=nums[idx];
+
+         currSum-=nums[idx];
+        int sub = cal(nums, tar, idx + 1, currSum);
+        currSum+=nums[idx];
+
+        return add + sub;
+    }
+};
+
+
+//app-2
+s1-s2=d approach 
+s1 contians positive ones
+s2 contains neg ones
+
+same as partions above problem 
+
+class Solution {
+public:
+     
+     int f(int i, vector<int>& arr, int target, vector<vector<int>> &dp) {
+    
+    
+    if(i==0){
+        if(target==0 && arr[0]==0) return 2; 
+        if(target==0 || target==arr[0]) return 1;
+        return 0;
+    }
+    
+    if(dp[i][target] != -1) return dp[i][target];
+    
+    int nottake = f(i - 1, arr, target, dp);
+    int take = 0;
+    
+    if (arr[i] <= target) {
+        take = f(i - 1, arr, target - arr[i], dp);
+    }
+    return dp[i][target] = take + nottake;
+}
+
+int perfectSum(vector<int>& arr, int target) {
+    
+    int n = arr.size();
+    vector<vector<int>> dp(n, vector<int> (target+1, -1));
+    return f(n - 1, arr, target,dp);
+}
+ 
+
+    int findTargetSumWays(vector<int>& nums, int target) {
+         int totalsum = 0;
+        for(auto x : nums){
+            totalsum+=x;
+        }
+
+       int tar = (totalsum-target)/2;
+        
+        if(totalsum-target < 0 || (totalsum-target)%2) return false;
+
+        return perfectSum(nums, tar);
+    }
+};
+
+
+
+//Partition Array Into Two Arrays to Minimize Sum Difference
+
+class Solution {
+public:
+    int minimumDifference(vector<int>& nums) {
+        
+        int totalsum = 0;
+
+        for(auto x : nums){
+            totalsum+=x;
+        }
+
+        int k = totalsum;
+
+        int n = nums.size();
+
+        vector<vector<bool>> dp(n, vector<bool> (k+1, false));
+
+        for(int i=0; i<n; i++) dp[i][0] = true;
+
+        if(nums[0]  <= k) dp[0][nums[0]] = true;
+
+        for(int i=1; i<n; i++){
+            for(int target =1; target<=k; target++){
+                bool nottake = dp[i-1][target];
+                bool take = false;
+                if(nums[i]<=target){
+                    take = dp[i-1][target-nums[i]];
+                }
+                
+                dp[i][target] = take | nottake;
+            } 
+        }
+
+        //dp[n-1][k] --> ans for is possible or not
+        //for every dp[n-1][i] i->say target it will result true or false accounting whether its possible or not
+
+        int mini = INT_MAX;
+
+        for(int i=0; i<=totalsum; i++){
+            if(dp[n-1][i] == true){
+                int s1 = i;
+                int s2 = totalsum - s1;
+                int diff = abs(s1-s2);
+
+                mini = min(mini, diff);
+            }
+        }
+
+        return mini;
+
+    }
+};
+
+
+

@@ -1,0 +1,115 @@
+# fractionl knapsack 
+# uniformity --> greedy
+Input: val[] = [60, 100, 120], wt[] = [10, 20, 30], capacity = 50
+Output: 240.000000
+
+
+struct Item{
+    int value;
+    int weight;
+};
+
+
+class Solution {
+  public:
+     
+      static bool comp(Item val1, Item val2) {
+        return (double)val1.value / val1.weight > (double)val2.value / val2.weight;
+    }
+     
+    double fractionalKnapsack(vector<int>& val, vector<int>& wt, int capacity) {
+        
+       
+         int n = wt.size();
+          vector<Item> v(n);
+
+        for (int i = 0; i < n; i++) {
+            v[i].value = val[i];
+            v[i].weight = wt[i];
+        }
+        
+        sort(v.begin(), v.end(), comp);
+        
+        double ans = 0;
+        
+        for(int i=0; i<n; i++){
+            if(v[i].weight <= capacity){
+                capacity-=v[i].weight;
+                ans+=v[i].value;
+            }else{
+                ans+= double(v[i].value)/v[i].weight * capacity;
+                break;
+            }
+        }
+        
+        return ans;
+    }
+};
+
+# 0/1 Knapsack without duplicates and non uniform
+# greedy cant be applied 
+# use dp trying out all combinations
+
+int f(int i,vector<int> &weight, vector<int> &value,  int w, vector<vector<int>> &dp){
+
+     if(i==0){
+		 if(weight[i]<=w) return value[i];
+		 return 0;
+	 }
+
+	 if(dp[i][w] != -1) return dp[i][w];
+     
+	 int nottake = 0 + f(i-1,weight, value, w, dp);
+
+	 int take = INT_MIN;
+	 if(weight[i]<=w){
+		 take = value[i] + f(i-1, weight, value, w-weight[i], dp);
+	 }
+     
+	 return dp[i][w] = max(take, nottake);
+
+}
+
+int knapsack(vector<int> weight, vector<int> value, int n, int maxWeight) 
+{
+
+	 vector<vector<int>> dp(n, vector<int> (maxWeight+1, -1)); 
+	 return f(n-1,weight, value, maxWeight,dp);
+
+}
+
+
+
+# Knapsack with Duplicate Items
+
+  int f(int i, vector<int>& val, vector<int>& wt, int w, vector<vector<int>> &dp){
+        
+        
+        if(i==0){
+            if(wt[0]<=w) return int(w/wt[0])*val[0]; // can take as many 
+            return 0;
+        }
+        
+        if(dp[i][w] != -1) return dp[i][w];
+        
+        int nottake = 0 + f(i-1, val, wt, w, dp);
+        
+        int take = INT_MIN;
+        if(wt[i]<=w){
+            take = val[i] + f(i, val, wt, w-wt[i], dp);
+            // same i as can take as many 
+        }
+        
+        return dp[i][w] = max(take, nottake);
+        
+        
+    }
+  
+  
+    int knapSack(vector<int>& val, vector<int>& wt, int capacity) {
+        
+        int n = wt.size();
+        vector<vector<int>> dp(n, vector<int> (capacity+1, -1));
+        return f(n-1, val, wt, capacity, dp);
+        
+    }

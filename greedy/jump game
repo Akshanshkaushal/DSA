@@ -1,0 +1,82 @@
+// Jump Game 1 able to cross
+
+Input: nums = [2,3,1,1,4]
+Output: true
+Explanation: Jump 1 step from index 0 to 1, then 3 steps to the last index.
+
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+ 
+    int maxInd = 0;
+
+    for(int i=0;i<nums.size();i++){
+        if(i>maxInd) return false;
+        maxInd = max(maxInd, i+nums[i]);
+    }
+
+return true;
+    }
+};
+
+//Jump Game II
+ you can jump to any nums[i + j] where:
+
+0 <= j <= nums[i] and
+i + j < n
+
+Input: nums = [2,3,1,1,4]
+Output: 2
+Explanation: The minimum number of jumps to reach the last index is 2. Jump 1 step from index 0 to 1, then 3 steps to the last index.
+
+
+// recursive sol
+// if 2 then can pursue or 2 therefore the loop from i to nums[ind]
+
+class Solution {
+public:
+    
+    int solve(int ind, int jumps, vector<int>& nums){
+       
+       if(ind>=nums.size()-1) return jumps;
+       int mini = INT_MAX;
+
+       for(int i = 1; i<=nums[ind]; i++){
+        if (ind + i < nums.size()) {
+         mini = min(mini, solve(ind+i, jumps+1, nums));
+        }
+       }
+
+       return mini;
+
+    }
+    
+    int jump(vector<int>& nums) {
+        
+       return solve(0,0,nums);
+
+    }
+};
+
+// range based --> greedy
+
+class Solution {
+public:
+    int jump(vector<int>& nums) {
+        int jumps = 0;
+        int r = 0, l=0;
+
+        while(r<nums.size()-1){
+            int farthest = 0;
+
+            for(int i=l;i<=r;i++){
+                farthest = max(i+nums[i],farthest);
+            }
+
+            l=r+1;
+            r=farthest;
+            jumps++;
+        }
+        return jumps;
+    }
+};

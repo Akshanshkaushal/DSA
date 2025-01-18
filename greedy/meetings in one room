@@ -1,0 +1,78 @@
+// N meetings in one room
+
+ struct Data{
+    int start;
+    int end;
+    int pos;
+};
+
+class Solution
+{   
+    
+    public:
+    static bool comp(Data val1, Data val2){
+        // sorting on baiss of end time of meetings
+        //ascending order
+        if(val2.end > val1.end) return true;
+        return false;
+    }
+    
+    public:
+ 
+    int maxMeetings(int start[], int end[], int n)
+    {
+        vector<Data> arr(n);
+        for(int i=0; i<n; i++){
+            arr[i].start = start[i];
+            arr[i].end = end[i];
+            arr[i].pos = i+1;
+        }
+        
+        sort(arr.begin(), arr.end(), comp);
+        
+        int cnt = 1, freetime = arr[0].end; vector<int> ds;
+        
+    for(int i=1; i<n; i++){
+        
+        if(arr[i].start > freetime){
+            cnt++;
+            freetime = arr[i].end;
+            ds.push_back(i);
+        }
+        }
+        
+        return cnt;
+        
+    }
+};
+
+
+
+//Minimum Platforms
+Input: arr[] = [900, 940, 950, 1100, 1500, 1800], dep[] = [910, 1200, 1120, 1130, 1900, 2000]
+Output: 3
+
+
+int findPlatform(vector<int>& arr, vector<int>& dep) {
+    sort(arr.begin(), arr.end());
+    sort(dep.begin(), dep.end());
+    
+    int i = 0, j = 0, platforms_needed = 0, max_platforms = 1;
+    
+    while (i < arr.size()) {
+        // If a train arrives before another departs, we need more platforms
+        if (arr[i] <= dep[j]) {
+            platforms_needed = platforms_needed+1;
+            i++;
+        } 
+        // If a train departs, we free up a platform
+        else {
+            platforms_needed = platforms_needed-1;
+            j++;
+        }
+        // Keep track of the maximum platforms needed at any time
+        max_platforms = max(max_platforms, platforms_needed);
+    }
+    
+    return max_platforms;
+}

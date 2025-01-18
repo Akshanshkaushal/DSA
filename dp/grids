@@ -1,0 +1,327 @@
+// Geek's Training
+Geek is going for a training program.  he cant
+ do the same activity on two consecutive days. 
+etermine the maximum total merit points 
+
+Example:
+
+Input: arr[]= [[1, 2, 5], [3, 1, 1], [3, 3, 3]]
+Output: 11
+
+class Solution {
+public:
+    int solve(int day, int last, vector<vector<int>>& arr) {
+        if (day == arr.size()) {
+            return 0;
+        }
+
+        int maxi = 0;
+
+        for (int i = 0; i < arr[day].size(); i++) {
+            if (i != last) {
+                int take = arr[day][i] + solve(day + 1, i, arr);
+                maxi = max(maxi, take);
+            }
+        }
+
+        return maxi;
+    }
+
+    int maximumPoints(vector<vector<int>>& arr) {
+        return solve(0, -1, arr);
+    }
+};
+
+
+//Unique Paths
+class Solution {
+
+public:
+    int f(int i, int j, vector<vector<int>>& dp){
+
+       if(i==0 && j==0){
+          return 1;
+       }
+
+       if(i<0 || j<0) return 0;
+
+       if(dp[i][j] != -1) return dp[i][j];
+
+       int up = f(i-1,j,dp);
+       int left = f(i,j-1,dp);
+
+       return dp[i][j] = up+left;
+
+    }
+
+public:
+    int uniquePaths(int m, int n) {
+        
+        vector<vector<int>> dp(m,vector<int> (n,-1));
+        return f(m-1,n-1,dp);
+
+    }
+};
+
+
+//Unique Paths II
+with obstacle
+
+class Solution {
+
+public:
+   int f(int i, int j, vector<vector<int>>& obstacleGrid){
+
+       if((i==0 && j==0) && (obstacleGrid[i][j] == 0)) return 1;
+
+       if(i<0 || j<0) return 0;
+          
+        int up=0, left=0;
+
+        if(obstacleGrid[i][j] == 0){
+        up = f(i-1,j,obstacleGrid);
+        left = f(i,j-1,obstacleGrid);
+   }
+
+       return up+left;
+
+   }
+
+public:
+    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+
+       int n = obstacleGrid.size();
+        int m = obstacleGrid[0].size();
+        
+        return f(n-1,m-1,obstacleGrid);
+
+    }
+};
+
+//Minimum Path Sum
+
+class Solution {
+
+public:
+   int f(int i, int j, vector<vector<int>>& grid, vector<vector<int>>& dp){
+         
+         if(i == 0 && j==0) return grid[i][j];
+
+         if(i<0 || j<0) return 1e9;
+
+         if(dp[i][j] != -1) return dp[i][j];
+
+         int uper = grid[i][j] + f(i-1,j,grid,dp);
+         int left = grid[i][j] + f(i,j-1,grid,dp);
+
+         return dp[i][j] = min(uper,left);
+
+   }
+
+public:
+    int minPathSum(vector<vector<int>>& grid) {
+ 
+        int n = grid.size();
+        int m = grid[0].size();
+
+        vector<vector<int>> dp(n,vector<int>(m,-1));
+        
+     return f(n-1,m-1, grid,dp);
+
+    }
+};
+
+// Triangle
+Given a triangle array, return the minimum path sum from top to bottom.
+
+For each step, you may move to an adjacent number of the row below. More formally, if you are on index i on the current row,
+you may move to either index i or index i + 1 on the next row.
+
+class Solution {
+
+public:
+    int f(int i, int j, int n, int m, vector<vector<int>>& triangle){
+
+       if(i==n-1) return triangle[n-1][j];
+
+       int downsame = triangle[i][j] + f(i+1,j,n,m,triangle);
+       int downnxt = triangle[i][j] + f(i+1,j+1,n,m,triangle);
+
+       return min(downsame, downnxt);
+
+    }
+
+public:
+    int minimumTotal(vector<vector<int>>& triangle) {
+        
+        int n = triangle.size();
+        int m = triangle[0].size();
+
+        return f(0,0,n,m,triangle);
+    }
+};
+
+//Minimum Falling Path Sum
+both varibales starting points
+
+
+class Solution {
+
+public:
+   int f(int i, int j, vector<vector<int>>& matrix){
+
+        
+        int n  = matrix.size();
+        int m = matrix[0].size();
+
+        if(j<0 || j>=m) return 1e8; 
+
+        if(i==n-1) return matrix[i][j];
+        
+
+        int d = matrix[i][j]+f(i+1,j,matrix);
+        int dl = matrix[i][j]+f(i+1,j-1,matrix);
+        int dr = matrix[i][j]+f(i+1,j+1,matrix);
+
+        return min({d,dl,dr});
+   }
+
+public:
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+        
+        int n  = matrix.size();
+        int m = matrix[0].size();
+
+        int mini = 1e8;
+        
+        for(int j=0;j<m;j++){
+        mini =  min(mini,f(0,j,matrix));
+        }
+       return mini;
+    }
+};
+
+-- 3d
+
+//TWO ROBOTS , 2 STARTING POINTS SIMULTAN
+
+
+Robot #1 is located at the top-left corner (0, 0), and
+Robot #2 is located at the top-right corner (0, cols - 1).
+
+From a cell (i, j), robots can move to cell (i + 1, j - 1), (i + 1, j), or (i + 1, j + 1).
+When any robot passes through a cell, It picks up all chocolates, and the cell becomes an empty cell.
+When both robots stay in the same cell, only one takes the chocolates.
+Both robots cannot move outside of the grid at any moment.
+Both robots should reach the bottom row in grid.
+
+
+class Solution {
+  
+  public:
+    int f(int i, int j1, int j2, vector<vector<int>>& grid, vector<vector<vector<int>>>& dp){
+        
+        int n = grid.size();
+        int m = grid[0].size();
+        
+        if(j1<0 || j1>=m || j2<0 || j2>=m) return -1e8;
+        
+        if(i==n-1){
+            if(j1==j2) return grid[i][j1];
+            else return grid[i][j1]+grid[i][j2];
+        }
+        
+        if(dp[i][j1][j2] != -1) return dp[i][j1][j2];
+        
+        int maxi= -1e8;
+        
+        for(int dj1=-1; dj1<=+1; dj1++){
+            for(int dj2=-1; dj2<=+1; dj2++){
+                if(j1==j2) maxi = max(maxi,grid[i][j1]+f(i+1,j1+dj1,j2+dj2,grid,dp)) ;
+                else maxi = max(maxi, grid[i][j1] + grid[i][j2] + f(i+1,j1+dj1,j2+dj2,grid,dp));
+            }
+        }
+        return dp[i][j1][j2] = maxi;
+    }
+    
+  public:
+    int solve(int n, int m, vector<vector<int>>& grid) {
+        
+        vector<vector<vector<int>>> dp(n,vector<vector<int>>(m,vector<int>(m,-1)));
+        
+        return f(0,0,m-1,grid,dp);
+        
+    }
+};
+
+
+//Word Search
+Input: board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
+Output: true
+
+class Solution {
+public:
+    
+    bool isWordPresent(int i, int j, int currentIndex, vector<vector<char>>&board, string &word)
+    {
+        // got the word
+        if(currentIndex == word.size()) return true;
+        
+        
+        // invalid cell
+        if(i < 0 || j < 0 || i >= board.size() || j >= board[0].size() ||
+          board[i][j] != word[currentIndex])
+            return false;
+        
+        // mark it as visited
+        board[i][j] = '.';
+        
+        // explore all the possiblies: L,R,U,D
+        // 4 ^ (m*n)
+        // 4 4 4 4 4= 4^5
+        int di[4] = {1,-1,0,0};
+        int dj[4] = {0,0,1,-1};
+ 
+        bool ans = false;
+        for(int k=0; k<4; k++){
+           ans = ans || isWordPresent(i+di[k], j+dj[k], currentIndex + 1, board, word);
+
+        }
+        
+        // undo the changes
+        board[i][j] = word[currentIndex];
+        return ans;
+    }
+    
+    bool exist(vector<vector<char>>& board, string word) 
+    {
+        int totalRows = board.size();
+        int totalCols = board[0].size();
+        
+        // O(m)
+        for(int i = 0; i < totalRows; i++)
+        {
+            // O(n)
+            for(int j = 0; j < totalCols; j++)
+            {
+                if(board[i][j] == word[0])
+                {
+                    if(isWordPresent(i,j,0,board,word))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+/*
+m->number of rows
+n->number of columns
+k-> total cells in board // (m*n)
+Time Complexity = O((m*n)*4^(m*n)) // exponential
+Space Complexity = O(1)
+*/
+
+//word search
+
+

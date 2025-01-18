@@ -1,0 +1,72 @@
+as many coins to achieve amount
+coins = [1,2,5], amount = 11 
+
+class Solution {
+
+public:
+ int f(int i, int target, vector<int>& coins){
+
+  if(i==0){
+    if(target % coins[0] == 0) return target/coins[0];
+    // target = 9 coin is 3 9/3= 3 coins 
+     return 1e9;
+  }
+
+   int nottake = 0 + f(i-1,target,coins);
+   int take = 1e9;
+   if(coins[i]<=target) take = 1+f(i,target-coins[i],coins);
+
+   return min(take, nottake);
+
+ }
+
+public:
+    int coinChange(vector<int>& coins, int amount) {
+
+        int n = coins.size();
+        
+        int ans =  f(n-1,amount,coins);
+        if(ans>=1e9) return -1;
+        return ans;
+
+    }
+};
+
+
+
+// no of comibation of coins to make that amout 
+
+Input: amount = 5, coins = [1,2,5]
+Output: 4
+Explanation: there are four ways to make up the amount:
+5=5
+5=2+2+1
+5=2+1+1+1
+5=1+1+1+1+1
+
+class Solution {
+
+public:
+    int f(int i, int target, vector<int>& coins){
+        
+        if(target == 0) return 1;
+        if (i == 0) return (target % coins[0] == 0);
+
+        int nottake = 0 + f(i-1,target,coins);
+        int take = 0;
+        if(coins[i]<=target) take =  f(i, target-coins[i], coins);
+        
+        // total cominations / ways
+        return take+nottake;
+
+    }
+
+public:
+    int change(int amount, vector<int>& coins) {
+
+         int n = coins.size();
+        
+         return f(n-1,amount,coins);
+
+    }
+};

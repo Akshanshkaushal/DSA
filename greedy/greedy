@@ -1,0 +1,204 @@
+// Lemonade Change
+
+class Solution {
+public:
+    bool lemonadeChange(vector<int>& bills) {
+        
+        int five = 0, ten = 0;
+
+        for(auto x : bills){
+
+            if(x==5) five++;
+
+            else if(x==10){
+                
+                if(five){
+                five--;
+                ten++;
+                }
+                else{
+                    return false;
+                }
+            }
+
+            else{
+                if(five && ten){
+                    five--;
+                    ten--;
+                }
+                else if(five>=3){
+                    five-=3;
+                }else{
+                    return false;
+                }
+            }
+        }
+return true;
+    }
+};
+
+//cookies assing
+greedy bache
+g = [1,2], s = [1,2,3]
+
+class Solution {
+public:
+    int findContentChildren(vector<int>& g, vector<int>& s) {
+        
+        int i=0, j=0;
+        int cnt =0;
+
+        sort(g.begin(), g.end());
+        sort(s.begin(),s.end());
+
+        while(i<g.size() && j<s.size()){
+            if(s[j] >= g[i]){
+                cnt++;
+                i++,j++;
+            }else{
+                j++;
+            }
+        }
+        return cnt;
+    }
+};
+
+//Shortest Job first
+
+n = 5
+bt = [4,3,7,1,2]
+Output: 4
+
+sort--> bt = [1,2,3,4,7]
+
+waiting times for processes
+0, 1, 3, 6 , 10
+avg = 20/5 = 4
+
+class Solution {
+  public:
+    long long solve(vector<int>& bt) {
+ int n = bt.size();
+  
+  sort(bt.begin(), bt.end());
+  
+ int t=0, wt=0;
+ 
+ for(int i=0; i<n; i++){
+     wt+=t;
+     t+=bt[i];
+ }
+ 
+ return wt/n;
+    
+  
+    }
+};
+
+
+//job sequencing
+
+struct Job 
+{ 
+    int id;	 // Job Id 
+    int dead; // Deadline of job 
+    int profit; // Profit if job is over before or on deadline 
+};
+
+class Solution {
+public:
+     static bool comp(Job val1, Job val2) {
+        return val1.profit > val2.profit;
+    }
+
+    // Function to find the maximum profit and the number of jobs done
+    vector<int> JobScheduling(vector<int> &id, vector<int> &deadline,
+                              vector<int> &profit) {
+
+       vector<Data> arr(n);
+        
+        for(int i=0; i<n; i++){
+            arr[i].profit = profit[i];
+            arr[i].deadline = deadline[i];
+            arr[i].id = id[i];
+        }
+
+        // Sort jobs by decreasing profit
+        sort(arr.begin(), arr.end(), comp);
+
+        // Find the maximum deadline to determine the size of the slots vector
+        int maxDeadline = -1;
+        for (int i = 0; i < n; i++) {
+            maxDeadline = max(maxDeadline, arr[i].dead);
+        }
+
+        // Create a slots vector to keep track of free time slots
+        vector<int> slots(maxDeadline + 1, -1); // Initialize with -1 indicating empty slots
+
+        int totalProfit = 0;
+        int jobCount = 0;
+
+        // Iterate over all jobs
+        for (int i = 0; i < n; i++) {
+            // Find a free slot for this job (starting from the job's deadline)
+            for (int j = arr[i].dead; j > 0; j--) {
+                if (slots[j] == -1) { // If slot is free
+                    slots[j] = arr[i].id; // Assign job to this slot
+                    totalProfit += arr[i].profit; // Add job's profit
+                    jobCount++; // Increase job count
+                    break; // Move to the next job
+                }
+            }
+        }
+
+        return {jobCount, totalProfit};
+    }
+};
+
+
+// Candy
+Each child must have at least one candy.
+Children with a higher rating get more candies than their neighbors.
+Return the minimum number of candies 
+
+Input: ratings = [1,0,2]
+Output: 5
+Explanation: You can allocate to the first, second and third child with 2, 1, 2 candies respectively.
+
+class Solution {
+public:
+    int candy(vector<int>& ratings) {
+        
+        int n = ratings.size();
+
+        vector<int> left(n);
+        left[0] = 1;
+        for(int i=1; i<n; i++){
+            if(ratings[i] > ratings[i-1]){
+                left[i] = left[i-1]+1;
+            }else{
+                left[i] = 1;
+            }
+        }
+
+        vector<int> right(n);
+        right[n-1] = 1;
+
+        for(int i=n-1; i>0; i--){
+            if(ratings[i-1] > ratings[i]){
+                right[i-1] = right[i]+1;
+            }else{
+                right[i-1] = 1;
+            }
+        }
+
+        int mini = 0;
+
+        for(int i=0; i<n; i++){
+            mini += max(left[i], right[i]);
+        }
+
+        return mini;
+
+    }
+};

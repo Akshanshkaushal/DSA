@@ -1,0 +1,119 @@
+class Solution {
+public:
+    // o(log(num)) == 0(log(10^9)) == o(30)--> constant
+    int setbits(int n) {
+        int cnt = 0;
+        while (n > 0) {
+            cnt += n % 2;
+            n /= 2;
+        }
+        return cnt;
+    }
+
+    int minimizeXor(int num1, int num2) {
+        int n = setbits(num2);
+
+        if (setbits(num1) == setbits(num2)) return num1;
+
+        vector<int> v;
+        //o(log(num1)) == 0(log(10^9)) == o(30)--> constant
+        while (num1 > 0) {
+            v.push_back(num1 % 2);
+            num1 /= 2;
+        }
+
+        //Reversing a vector with at most 30 elements
+        //o(log(num1)) == 0(log(10^9)) == o(30)--> constant
+        reverse(v.begin(), v.end());
+
+        vector<int> ans;
+
+        //loop also iterates through the binary vector (v), which has at most 30 elements
+         //o(log(num1)) == 0(log(10^9)) == o(30)--> constant
+        for (auto x : v) {
+            if (n > 0 && x == 1) {
+                ans.push_back(1);
+                n--;
+            } else {
+                ans.push_back(0);
+            }
+        }
+
+        for (int i = ans.size() - 1; i >= 0; i--) {
+            if (n > 0 && ans[i] == 0) {
+                ans[i] = 1;
+                n--;
+            }
+        }
+
+        while (n > 0) {
+            ans.push_back(1);
+            n--;
+        }
+
+        int res = 0;
+        for (int i = 0; i < ans.size(); i++) {
+            res = res * 2 + ans[i];
+        }
+
+        //or
+//               int res = 0;
+//         int sz = ans.size();
+//   for (int i = 0; i < sz; i++) {
+//     if (ans[i] == 1) {
+//         res += (1 << (sz - i - 1)); // by bit shifting 
+//     }
+// }
+
+//using pow(i,n)
+//   for (int i = binary.size() - 1; i >= 0; i--) {
+//             if (binary[i] == '1')
+//                 ans += pow(2, 31 - i);
+//         }
+
+        return res;
+    }
+};
+
+// tc: o(log(num1)) == 0(log(10^9)) == o(30)--> constant
+// sc: o(log(num1)) == 0(log(10^9)) == o(30)--> constant
+
+
+
+//Bitwise XOR of All Pairings
+nums3, which contains the bitwise XOR of all pairings of integers
+between nums1 and nums2 (every integer in nums1 is paired with every integer in nums2 exactly once).
+Return the bitwise XOR of all integers in nums3.
+
+case 1: one odd one even 
+odd will be cancel out 
+only even consider
+a1:[a,b] a2:[c] a2--> xor will be canceled out being odd
+
+case 2: both odd
+have to consider all no one will cancel out
+
+case 3: both even
+0 all will be canceled out consider nothing
+
+class Solution {
+public:
+    int xorAllNums(vector<int>& nums1, vector<int>& nums2) {
+        int c1 = nums1.size();
+        int c2 = nums2.size();
+        int x1 = 0, x2 = 0;
+        
+        // if c1 --> odd consider other arr which is even
+        if (c1 % 2 != 0) {
+            for (int num : nums2) {
+                x2 ^= num;
+            }
+        }
+        if (c2 % 2 != 0) {
+            for (int num : nums1) {
+                x1 ^= num;
+            }
+        }
+        return x1 ^ x2;
+    }
+};

@@ -1,0 +1,27 @@
+class Solution{
+    
+    public:
+    int f(int i, int price[], int n, vector<vector<int>>& dp){
+        
+        if(i==0) return (n*price[0]);
+        
+        if(dp[i][n] != -1) return dp[i][n];
+        
+        int nottake = 0 + f(i-1,price,n,dp);
+        int take = INT_MIN;
+        int rodlength = i+1;
+        if(rodlength<=n) take = price[i] + f(i,price,n-rodlength,dp);
+        
+        return dp[i][n] = max(take,nottake);
+        
+    }
+    
+  public:
+    int cutRod(int price[], int n) {
+        
+        vector<vector<int>> dp(n,vector<int>(n+1,-1));
+        
+        return f(n-1, price,n,dp);
+        
+    }
+};

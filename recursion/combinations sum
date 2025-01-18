@@ -1,0 +1,118 @@
+//Combination Sum
+Input: candidates = [2,3,6,7], target = 7
+Output: [[2,2,3],[7]]
+// combinations are uniquye , but wihtiun combiantions 
+// each no can be used more than once
+ array of distinct integers candidates and a target integer target, return a list of all unique combinations of candidates
+ where the chosen numbers sum to target
+ // no can be used multiplke times
+
+ class Solution {
+
+public:
+ void solve(int i, int target, vector<int>& arr, vector<int> output, vector<vector<int>>& ans){
+      
+      //base case
+      if(i == arr.size()){
+        if(target == 0){
+            ans.push_back(output);
+        }
+        return;
+      }
+     
+     //include
+     if(arr[i] <= target){
+        output.push_back(arr[i]);
+        // no can be used multiplke times
+        solve(i,target-arr[i],arr,output,ans);
+        output.pop_back();
+     }
+
+     //exclude
+     solve(i+1,target,arr,output,ans);
+
+ }
+
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> ans;
+        vector<int> output;
+
+        solve(0,target,candidates,output,ans);
+
+        return ans;
+    }
+};
+
+
+//Combination Sum II
+with duplicates in the given array
+// Each number in candidates may only be used once in the
+now have to apply the conditional if approach to filter the 
+duplicate elements
+
+Input: candidates = [10,1,2,7,6,1,5], target = 8
+Output: 
+[
+[1,1,6],
+[1,2,5],
+[1,7],
+[2,6]
+]
+
+
+class Solution {
+
+public:
+   void solve(int ind, int target, vector<int>& arr,vector<int> output, vector<vector<int>>& ans ){
+
+    //base case
+    //not required to write i==arr.size() return as loop is handling that
+    //Adding an explicit base case disrupts this natural flow and prematurely stops further recursive calls.
+    if(target == 0){
+        ans.push_back(output);
+        return;
+    }
+    // 0 1 2 3 4
+    //[1,1,1,2,2]
+    //f(ind, target, ds)
+    //f(0,4,_)
+    // |0       |1       |2                    |3        |4   
+    //f(1,3,[1])   no      no                     f(4,2,[2])
+    //|1                    |2   |3               |4  |5
+    //f(2,2,[1,1])          no   f(2,1,[1,2])     f(5,0,[2,2])
+    //|2              |3
+    //f(3,0,[1,1,2])  
+
+   // loop is handling thebase conditon
+    for(int i=ind;i<arr.size();i++){
+
+        // each no should be used at most once ==>> no duplicates
+        if(i>ind && arr[i] == arr[i-1]) continue;
+
+        if(arr[i]>target) break;
+
+          output.push_back(arr[i]);
+          solve(i+1, target-arr[i], arr, output, ans);
+          output.pop_back();
+    }
+
+   }
+
+public:
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        vector<vector<int>> ans;
+        vector<int> output;
+        
+        // to make ALL duplicates ele consecutively 
+        sort(candidates.begin(),candidates.end());
+
+        solve(0,target,candidates,output,ans);
+        return ans;
+    }
+};
+
+// Combination Sum III
+each no should be used at most once ==>> no duplicates
+--> same as  Combination Sum II
+Only numbers 1 through 9 are used.

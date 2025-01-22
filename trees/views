@@ -1,0 +1,154 @@
+// Top View 
+
+
+//using help of vertical level
+
+class Solution
+{
+    public:
+    //Function to return a list of nodes visible from the top view 
+    //from left to right in Binary Tree.
+    vector<int> topView(Node *root)
+    {
+        
+        map<int, int> topNodes;
+       queue<pair<Node*, int>> q;
+        
+        q.push({root,0});
+        
+        while(!q.empty()){
+            
+        auto p = q.front();
+        q.pop();
+        Node* node = p.first;
+        int x = p.second;
+            
+            // add only if first time for top view
+            if(topNodes.find(x) == topNodes.end()){
+                topNodes[x] = node->data;
+            }
+            
+            if(node->left){
+                q.push({node->left, x-1});
+            }
+            
+            if(node->right){
+                q.push({node->right, x+1});
+            }
+            
+        }
+        
+        
+        vector<int> ans;
+        
+        for(auto p: topNodes){
+             ans.push_back(p.second);
+        }
+        
+        return ans;
+        
+    }
+
+};
+
+
+
+// bottom view
+//just do not add cond if come first time in map , keep on adding map value will be replace and you 
+// will get the bottom ones
+
+
+class Solution {
+  public:
+    vector <int> bottomView(Node *root)     {
+        
+        map<int, int> topNodes;
+       queue<pair<Node*, int>> q;
+        
+        q.push({root,0});
+        
+        while(!q.empty()){
+            
+        auto p = q.front();
+        q.pop();
+        Node* node = p.first;
+        int x = p.second;
+            
+            topNodes[x] = node->data;
+            
+            if(node->left){
+                q.push({node->left, x-1});
+            }
+            
+            if(node->right){
+                q.push({node->right, x+1});
+            }
+            
+        }
+        
+        
+        vector<int> ans;
+        
+        for(auto p: topNodes){
+             ans.push_back(p.second);
+        }
+        
+        return ans;
+        
+    }
+};
+
+//right side
+
+reverse preorde root right left
+
+class Solution {
+public:
+    
+    void recursion(TreeNode* root, int level, vector<int>& res){
+        
+        if(root==NULL) return;
+
+        if(res.size() == level) res.push_back(root->val);
+
+        recursion(root->right, level+1, res);
+        recursion(root->left, level+1, res);
+
+    }
+
+    vector<int> rightSideView(TreeNode* root) {
+        
+        vector<int> res;
+        recursion(root,0,res);
+        return res;
+ 
+    }
+};
+
+//left side
+
+  preorder root left right
+
+class Solution {
+public:
+    
+    void recursion(TreeNode* root, int level, vector<int>& res){
+        
+        if(root==NULL) return;
+
+        if(res.size() == level) res.push_back(root->val);
+        
+        recursion(root->left, level+1, res);
+        recursion(root->right, level+1, res);
+
+
+    }
+
+    vector<int> rightSideView(TreeNode* root) {
+        
+        vector<int> res;
+        recursion(root,0,res);
+        return res;
+ 
+    }
+};

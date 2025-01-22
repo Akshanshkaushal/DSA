@@ -1,0 +1,168 @@
+//Binary tree representation
+
+class Solution{
+public:
+ node* roo(node* root0, const vector<int> &vec, int i) {
+        if (i >= vec.size()) {
+            return nullptr;
+        }
+
+        if (root0 == nullptr) {
+            root0 = newNode(vec[i]);
+        }
+
+        if (2*i+1 < vec.size()) {
+            root0->left = roo(root0->left, vec, 2*i+1);
+        }
+        if (2*i+2 < vec.size()) {
+            root0->right = roo(root0->right, vec, 2*i+2);
+        }
+
+        return root0;
+    }
+
+    void create_tree(node* root0, const vector<int> &vec) {
+        roo(root0, vec, 0);
+    }
+
+};
+
+
+
+//max height
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+
+       if(root == NULL) return 0;
+
+       int lh = maxDepth(root->left);
+       int rh = maxDepth(root->right);
+
+       return 1+max(lh,rh);
+
+    }
+};
+
+ // check balanced
+class Solution {
+    
+public:
+    
+    int leveloftree(TreeNode* root){
+        
+        if(root == NULL) return 0;
+        return 1+max(leveloftree(root->left), leveloftree(root->right));
+    }
+    
+    bool isBalanced(TreeNode* root) {
+        
+        if(root == NULL) return true;
+        
+        int lh = leveloftree(root->left);
+        int rh = leveloftree(root->right);
+
+        if(abs(lh-rh) > 1) return false;
+
+        bool leftbalance = isBalanced(root->left);
+        bool rightbalance = isBalanced(root->right);
+
+        return leftbalance && rightbalance;
+ 
+    }
+};
+
+//Diameter of Binary Tree
+ 
+class Solution {
+public:
+    int height(TreeNode* root, int &maxDiameter) {
+        if (root == nullptr) return 0;
+        
+        int lh = height(root->left, maxDiameter);
+        int rh = height(root->right, maxDiameter);
+        
+        // Update the maximum diameter found during backtracking
+        maxDiameter = max(maxDiameter, lh + rh);
+        
+        // Return the height of the current node
+        return 1 + max(lh, rh);
+    }
+
+    int diameterOfBinaryTree(TreeNode* root) {
+        int maxDiameter = 0;
+        height(root, maxDiameter);
+        return maxDiameter;
+    }
+};
+
+//Maximum Path Sum
+ 
+class Solution {
+public:
+    
+    int help(TreeNode* root, int &maxi){
+
+      if(root == NULL) return 0;
+
+      int l = max(0,help(root->left, maxi));
+      int r = max(0,help(root->right, maxi));
+
+      maxi = max(maxi, root->val + l + r);  // update duting backtracking
+
+      return root->val + max(l,r);
+
+    }
+
+    int maxPathSum(TreeNode* root) {
+        int maxi = INT_MIN;
+        help(root, maxi);
+        return maxi;
+    }
+};
+
+
+
+
+// same tree
+
+ 
+class Solution {
+public:
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+        
+        if(p==NULL || q==NULL){
+            return (p==q);
+        }
+
+        return (p->val == q->val) && isSameTree(p->left,q->left) && isSameTree(p->right, q->right);
+
+    }
+};
+
+//Symmetric Tree--mirror
+ 
+class Solution {
+public:
+    
+    bool check(TreeNode* p, TreeNode* q){
+
+        if(!p && !q) return true;
+
+        if(!p || !q) return false;
+
+         if(p->val != q->val) return false;
+
+         return check(p->left, q->right) && check(p->right, q->left);
+
+    }
+
+    bool isSymmetric(TreeNode* root) {
+
+        if(!root) return true;
+        
+       return check(root->left, root->right); 
+
+    }
+};
+
